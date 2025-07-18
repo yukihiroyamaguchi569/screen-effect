@@ -1,4 +1,6 @@
 import { FadeTransition } from '../transitions/fade.js';
+import { SlideTransition } from '../transitions/slide.js';
+import { ZoomTransition } from '../transitions/zoom.js';
 
 export class SceneManager {
     constructor() {
@@ -14,6 +16,12 @@ export class SceneManager {
             'ruinedDoor'
         ];
         this.currentSceneIndex = 0;
+        this.currentEffect = 'fade';
+        this.transitions = {
+            fade: FadeTransition,
+            slide: SlideTransition,
+            zoom: ZoomTransition
+        };
     }
 
     initialize() {
@@ -31,6 +39,18 @@ export class SceneManager {
         document.getElementById('nextScene').addEventListener('click', () => {
             this.nextScene();
         });
+
+        // エフェクトボタンのイベントリスナー設定
+        document.querySelectorAll('.effect-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // 現在のアクティブボタンを非アクティブに
+                document.querySelector('.effect-button.active').classList.remove('active');
+                // クリックされたボタンをアクティブに
+                button.classList.add('active');
+                // エフェクトを設定
+                this.currentEffect = button.dataset.effect;
+            });
+        });
     }
 
     createScene(name, backgroundImage) {
@@ -45,12 +65,13 @@ export class SceneManager {
         if (!scene) return;
 
         const previousScene = this.currentScene;
+        const transition = this.transitions[this.currentEffect];
         
         if (previousScene) {
-            await FadeTransition.execute(previousScene, scene);
+            await transition.execute(previousScene, scene);
             this.container.removeChild(previousScene);
         } else {
-            await FadeTransition.execute(null, scene);
+            await transition.execute(null, scene);
         }
 
         this.container.appendChild(scene);

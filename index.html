@@ -8,10 +8,25 @@
 </head>
 <body>
     <div id="app">
-        <div id="scene-container"></div>
-        <div id="transition-overlay"></div>
-        <div class="controls">
-            <button id="nextScene">次のシーン</button>
+        <div id="sidebar">
+            <h2>遷移エフェクト</h2>
+            <div class="effect-list">
+                <button class="effect-button active" data-effect="fade">フェード</button>
+                <button class="effect-button" data-effect="slide">スライド</button>
+                <button class="effect-button" data-effect="zoom">ズーム</button>
+            </div>
+            <div class="effect-preview">
+                <div class="preview-box">
+                    <div class="preview-text">エフェクトプレビュー</div>
+                </div>
+            </div>
+        </div>
+        <div id="main-content">
+            <div id="scene-container"></div>
+            <div id="transition-overlay"></div>
+            <div class="controls">
+                <button id="nextScene">次のシーン</button>
+            </div>
         </div>
     </div>
     <script type="module" src="js/main.js"></script>
