@@ -12,8 +12,7 @@ export class SceneManager {
             'title',
             'schoolGate',
             'principalsOffice',
-            'managerRoom',
-            'ruinedDoor'
+ 
         ];
         this.currentSceneIndex = 0;
         this.currentEffect = 'fade';
@@ -29,8 +28,7 @@ export class SceneManager {
         this.createScene('title', '../src/images/title.png');
         this.createScene('schoolGate', '../src/images/school-gate.png');
         this.createScene('principalsOffice', '../src/images/principals-office.png');
-        this.createScene('managerRoom', '../src/images/manager-room-door.png');
-        this.createScene('ruinedDoor', '../src/images/ruined-door.jpg');
+
         
         // 最初のシーンを表示
         this.showScene('title');
