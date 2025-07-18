@@ -23,6 +23,7 @@ body {
     padding: 20px;
     color: white;
     border-right: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 100;
 }
 
 #sidebar h2 {
@@ -81,12 +82,14 @@ body {
 #main-content {
     flex: 1;
     position: relative;
+    overflow: hidden;
 }
 
 #scene-container {
     width: 100%;
     height: 100%;
     position: relative;
+    overflow: hidden;
 }
 
 #transition-overlay {
@@ -107,7 +110,15 @@ body {
     height: 100%;
     background-size: cover;
     background-position: center;
-    opacity: 1;
+    will-change: transform, opacity;
+}
+
+.scene.slide-enter {
+    transform: translateX(100%);
+}
+
+.scene.slide-exit {
+    transform: translateX(-100%);
 }
 
 .controls {
