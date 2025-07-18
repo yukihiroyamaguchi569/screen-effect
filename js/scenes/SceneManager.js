@@ -10,6 +10,7 @@ export class SceneManager {
         this.scenes = new Map();
         this.container = document.getElementById('scene-container');
         this.currentEffect = 'fade';
+        this.currentImageEffect = 'none';
         this.transitions = {
             fade: FadeTransition,
             slide: SlideTransition,
@@ -41,6 +42,18 @@ export class SceneManager {
                 this.playTransition();
             });
         });
+
+        // 画像エフェクトボタンのイベントリスナー設定
+        document.querySelectorAll('.image-effect-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // 現在のアクティブボタンを非アクティブに
+                document.querySelector('.image-effect-button.active').classList.remove('active');
+                // クリックされたボタンをアクティブに
+                button.classList.add('active');
+                // 画像エフェクトを適用
+                this.applyImageEffect(button.dataset.imageEffect);
+            });
+        });
     }
 
     createScene(name, backgroundImage) {
@@ -69,6 +82,24 @@ export class SceneManager {
         this.container.appendChild(scene);
         this.currentScene = scene;
         this.currentSceneName = sceneName;
+        
+        // 新しいシーンに現在の画像エフェクトを適用
+        this.applyImageEffect(this.currentImageEffect);
+    }
+
+    applyImageEffect(effectName) {
+        if (!this.currentScene) return;
+        
+        // 以前のエフェクトクラスをすべて削除
+        this.currentScene.classList.remove('sepia', 'grayscale', 'noise', 'pixelate', 'huerotate');
+        
+        // 新しいエフェクトを適用（「なし」以外の場合）
+        if (effectName !== 'none') {
+            this.currentScene.classList.add(effectName);
+        }
+        
+        // 現在のエフェクトを記録
+        this.currentImageEffect = effectName;
     }
 
     async playTransition() {
@@ -105,6 +136,9 @@ export class SceneManager {
         this.container.appendChild(titleScene);
         this.currentScene = titleScene;
         this.currentSceneName = 'title';
+
+        // 現在の画像エフェクトを適用
+        this.applyImageEffect(this.currentImageEffect);
 
         // 強制的にリフロー
         titleScene.offsetHeight;
