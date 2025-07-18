@@ -1,6 +1,7 @@
 import { FadeTransition } from '../transitions/fade.js';
 import { SlideTransition } from '../transitions/slide.js';
 import { ZoomTransition } from '../transitions/zoom.js';
+import { CurtainTransition } from '../transitions/curtain.js';
 
 export class SceneManager {
     constructor() {
@@ -12,14 +13,16 @@ export class SceneManager {
             'title',
             'schoolGate',
             'principalsOffice',
- 
+            'managerRoom',
+            'ruinedDoor'
         ];
         this.currentSceneIndex = 0;
         this.currentEffect = 'fade';
         this.transitions = {
             fade: FadeTransition,
             slide: SlideTransition,
-            zoom: ZoomTransition
+            zoom: ZoomTransition,
+            curtain: CurtainTransition
         };
     }
 
