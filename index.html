@@ -18,13 +18,23 @@
             </div>
             
             <h2>画像エフェクト</h2>
+            <div class="image-select">
+                <label for="image-selector">画像選択：</label>
+                <select id="image-selector">
+                    <option value="title">タイトル</option>
+                    <option value="schoolGate">学校ゲート</option>
+                    <option value="kurouzuGate">黒渦の門</option>
+                    <option value="principalsOffice">校長室</option>
+                    <option value="ruinedDoor">廃墟の扉</option>
+                </select>
+            </div>
             <div class="image-effect-list">
+                <button class="image-effect-button active" data-image-effect="none">なし</button>
                 <button class="image-effect-button" data-image-effect="sepia">セピア調</button>
                 <button class="image-effect-button" data-image-effect="grayscale">グレースケール</button>
                 <button class="image-effect-button" data-image-effect="noise">ノイズ追加</button>
                 <button class="image-effect-button" data-image-effect="pixelate">ピクセル化</button>
                 <button class="image-effect-button" data-image-effect="huerotate">色調シフト</button>
-                <button class="image-effect-button active" data-image-effect="none">なし</button>
             </div>
         </div>
         <div id="main-content">

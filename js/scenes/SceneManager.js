@@ -18,12 +18,20 @@ export class SceneManager {
             curtain: CurtainTransition
         };
         this.isTransitioning = false;
+        this.imageFiles = {
+            title: '../src/images/title.png',
+            schoolGate: '../src/images/school-gate.png',
+            kurouzuGate: '../src/images/kurouzu-gate.jpg',
+            principalsOffice: '../src/images/principals-office.png',
+            ruinedDoor: '../src/images/ruined-door.jpg'
+        };
     }
 
     initialize() {
-        // シーンの作成（タイトルと学校ゲートのみ）
-        this.createScene('title', '../src/images/title.png');
-        this.createScene('schoolGate', '../src/images/school-gate.png');
+        // すべてのシーンを作成
+        for (const [name, path] of Object.entries(this.imageFiles)) {
+            this.createScene(name, path);
+        }
         
         // 最初のシーンを表示
         this.resetToTitle();
@@ -54,6 +62,13 @@ export class SceneManager {
                 this.applyImageEffect(button.dataset.imageEffect);
             });
         });
+
+        // 画像セレクターのイベントリスナー設定
+        const imageSelector = document.getElementById('image-selector');
+        imageSelector.value = 'title'; // デフォルト値を設定
+        imageSelector.addEventListener('change', () => {
+            this.showSelectedImage(imageSelector.value);
+        });
     }
 
     createScene(name, backgroundImage) {
@@ -61,6 +76,33 @@ export class SceneManager {
         scene.className = 'scene';
         scene.style.backgroundImage = `url(${backgroundImage})`;
         this.scenes.set(name, scene);
+    }
+
+    async showSelectedImage(sceneName) {
+        if (this.isTransitioning) return;
+        
+        const scene = this.scenes.get(sceneName);
+        if (!scene) return;
+
+        // コンテナ内の全ての子要素を削除
+        while (this.container.firstChild) {
+            this.container.removeChild(this.container.firstChild);
+        }
+
+        // 選択されたシーンを追加
+        scene.style.opacity = '1';  // 確実に表示
+        scene.style.transform = 'none';  // 変形をリセット
+        scene.style.transition = 'none';  // トランジションを無効化
+        
+        this.container.appendChild(scene);
+        this.currentScene = scene;
+        this.currentSceneName = sceneName;
+
+        // 現在の画像エフェクトを適用
+        this.applyImageEffect(this.currentImageEffect);
+
+        // 強制的にリフロー
+        scene.offsetHeight;
     }
 
     async showScene(sceneName) {
@@ -82,6 +124,10 @@ export class SceneManager {
         this.container.appendChild(scene);
         this.currentScene = scene;
         this.currentSceneName = sceneName;
+        
+        // 画像セレクターの値を更新
+        const imageSelector = document.getElementById('image-selector');
+        imageSelector.value = sceneName;
         
         // 新しいシーンに現在の画像エフェクトを適用
         this.applyImageEffect(this.currentImageEffect);
@@ -136,6 +182,10 @@ export class SceneManager {
         this.container.appendChild(titleScene);
         this.currentScene = titleScene;
         this.currentSceneName = 'title';
+
+        // 画像セレクターの値を更新
+        const imageSelector = document.getElementById('image-selector');
+        imageSelector.value = 'title';
 
         // 現在の画像エフェクトを適用
         this.applyImageEffect(this.currentImageEffect);
