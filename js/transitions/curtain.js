@@ -1,7 +1,18 @@
 export class CurtainTransition {
     static async execute(fromScene, toScene, duration = 1000) {
         return new Promise(resolve => {
-            // オーバーレイ要素の作成
+            const container = document.getElementById('scene-container');
+            
+            // カーテン要素の作成
+            const curtainContainer = document.createElement('div');
+            curtainContainer.style.position = 'absolute';
+            curtainContainer.style.top = '0';
+            curtainContainer.style.left = '0';
+            curtainContainer.style.width = '100%';
+            curtainContainer.style.height = '100%';
+            curtainContainer.style.zIndex = '100';
+            curtainContainer.style.pointerEvents = 'none';
+
             const curtainLeft = document.createElement('div');
             const curtainRight = document.createElement('div');
             
@@ -12,8 +23,7 @@ export class CurtainTransition {
                 curtain.style.height = '100%';
                 curtain.style.width = '50%';
                 curtain.style.backgroundColor = '#000';
-                curtain.style.transition = `transform ${duration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
-                curtain.style.zIndex = '100';
+                curtain.style.transition = `transform ${duration/2}ms cubic-bezier(0.4, 0, 0.2, 1)`;
             });
 
             // 左右のカーテンの個別設定
@@ -23,45 +33,56 @@ export class CurtainTransition {
             curtainRight.style.right = '0';
             curtainRight.style.transform = 'translateX(100%)';
 
-            // カーテンを追加
-            const container = document.getElementById('scene-container');
-            container.appendChild(curtainLeft);
-            container.appendChild(curtainRight);
+            // カーテンをコンテナに追加
+            curtainContainer.appendChild(curtainLeft);
+            curtainContainer.appendChild(curtainRight);
+            container.appendChild(curtainContainer);
 
-            // 現在のシーンを非表示に
+            // シーンの初期設定
             if (fromScene) {
+                fromScene.style.transition = 'none';
                 fromScene.style.opacity = '1';
-                fromScene.style.transition = `opacity ${duration/2}ms ease`;
             }
+            
+            toScene.style.transition = 'none';
+            toScene.style.opacity = '0';
+            container.appendChild(toScene);
 
-            // カーテンを閉じる
-            requestAnimationFrame(() => {
-                curtainLeft.style.transform = 'translateX(0)';
-                curtainRight.style.transform = 'translateX(0)';
+            // アニメーションの実行
+            const animate = async () => {
+                // Step 1: カーテンを閉じる
+                await new Promise(closeDone => {
+                    requestAnimationFrame(() => {
+                        curtainLeft.style.transform = 'translateX(0)';
+                        curtainRight.style.transform = 'translateX(0)';
+                        setTimeout(closeDone, duration/2);
+                    });
+                });
 
-                // カーテンが閉じきった時点でシーンを切り替え
-                setTimeout(() => {
-                    if (fromScene) {
-                        fromScene.style.opacity = '0';
-                        container.removeChild(fromScene);
-                    }
-                    container.appendChild(toScene);
-                    toScene.style.opacity = '1';
+                // Step 2: シーンの切り替え
+                if (fromScene && fromScene.parentNode) {
+                    container.removeChild(fromScene);
+                }
+                toScene.style.opacity = '1';
 
-                    // カーテンを開く
+                // Step 3: カーテンを開く
+                await new Promise(openDone => {
                     requestAnimationFrame(() => {
                         curtainLeft.style.transform = 'translateX(-100%)';
                         curtainRight.style.transform = 'translateX(100%)';
-
-                        // トランジション完了後にカーテンを削除
-                        setTimeout(() => {
-                            container.removeChild(curtainLeft);
-                            container.removeChild(curtainRight);
-                            resolve();
-                        }, duration);
+                        setTimeout(openDone, duration/2);
                     });
-                }, duration);
-            });
+                });
+
+                // Step 4: クリーンアップ
+                if (curtainContainer.parentNode) {
+                    container.removeChild(curtainContainer);
+                }
+                resolve();
+            };
+
+            // アニメーション開始
+            requestAnimationFrame(animate);
         });
     }
 } 
